@@ -29,6 +29,21 @@ What that lineage means concretely, versus the (crowded, 155-plugin) Security & 
 
 The category being crowded is stated on purpose: this plugin's value is the evidence chain and the standard-interface demonstration, not feature uniqueness.
 
+## Channel facts (from the #9614 review — thanks @argszero)
+
+Four properties of the guard seam that scope what this plugin's ledger and rules can claim, verified against `packages/core/tools/src/index.ts` at master (`d743267388`):
+
+1. **The ledger is a guard-layer record, not a complete decision record.** The guard runs only when the pre-execute waterfall returned `allow` (and the user did not refuse an ask, and the call was not cancelled upstream). Denials owned by other layers never enter the guard — a complete audit record needs `tools/pre-execute` + `tools/post-execute` as writers. Our JSONL ledger describes exactly this layer and nothing more.
+2. **`R-unknown` is a *name* allowlist, not a *tool* allowlist.** `execution.name` can resolve to different registered definitions across scopes (scope registrations shadow inherited entries). A same-named shadow preset is indistinguishable to the guard.
+3. **PTC mode changes the traffic shape.** Model-direct calls of native tool names are denied upstream (`UNKNOWN_TOOL`) before the policy pipeline; nested sub-dispatches *do* reach the guard (inheriting `rootCallId`). Policies must therefore cover sub-dispatch argument shapes too, and the allowlist only sees what actually arrives.
+4. **Structured denial metadata is channel-forced external.** A guard can only return a string; `denialInfo` in the pipeline comes from the waterfall's decision. The separate JSONL ledger is the channel's requirement, not a stylistic choice — and the refusal reason is model-facing (`Error: <reason>` is the tool result), so keep reasons short and carry the rule id (`action-guard: … (R-bounds)`) to correlate with the ledger.
+
+**Why the guard seam (and not a `tools/pre-execute` listener):** a guard is monotonic — no other layer can force-allow what it denied — while a pre-execute listener sits in a waterfall it does not own, and one early `allow` ends the chain for everyone after it. Deterministic, synchronous, name+arguments policy belongs here; operator-visible asks belong to the waterfall.
+
+**Mount-point note:** all guards are monotonic-deny, so the outcome is order-independent — but the *reported reason* is the first one found (global first, then scope chain farthest-first). If your policy can deny the same call from two layers, pin a single mount point to keep reported rule ids unambiguous.
+
+## Honest scope
+
 ## Honest scope
 
 ## Honest scope
