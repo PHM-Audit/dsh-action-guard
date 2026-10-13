@@ -1,0 +1,26 @@
+{
+  "name": "@phm-audit/dsh-action-guard",
+  "version": "1.0.0",
+  "description": "Deterministic pre-execution tool-call guard for DeepSeek Harness (monotonic guard seam; operator-declared policy; decision ledger)",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.4"
+  },
+  "license": "MIT",
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "dsh",
+    "action-guard",
+    "tool-guard"
+  ],
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.4"
+  }
+}
