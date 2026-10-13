@@ -17,6 +17,20 @@ End-to-end smoke: the Cordis wrapper is additionally verified against the **publ
 - **Fail-closed** — an internal evaluation error denies with a distinctive reason (a broken guard can never silently become a hole)
 - **Decision ledger** — every verdict appended to a local JSONL ledger with a chain id (correlation artifact for incident forensics; FNV-based chain id, not a tamper-proofing guarantee)
 
+## Method lineage — PHM
+
+This plugin is the harness-native expression of the **PHM deterministic-verification methodology** (gate-first, evidence-first), whose parent project [agent-action-verifier](https://github.com/PHM-Audit/agent-action-verifier) is validated on the **AgentDojo official benchmark with a real LLM in the loop** (no ASR/FP events in the v2.2 re-run, FP fix-cycle 16 → 1 → 0 published, all artifacts open with SHA-256 chains, third-party thread engagement on record).
+
+What that lineage means concretely, versus the (crowded, 155-plugin) Security & Permissions category:
+
+1. **Official third-party benchmark lineage** — the parent method is measured on AgentDojo, not only on self-built samples (verified 2026-10-13 across a 10-repo sample of direct competitors: none cites an industry-standard benchmark; the closest, dsh-defend, uses a self-built 105-sample red-team set).
+2. **Cross-domain deployment record** — the same gate criteria (benign FP=0 / injected FN=0 / deterministic repeats / fail-closed / audit ledger) run in robot (Unitree official-URDF gate), traffic-flow (845k-frame NGSIM), and SDK-contract lines — a method with a track record, not a one-off plugin.
+3. **Open, recomputable evidence** — every claim in this README has an on-disk artifact: gate counts in `tests/`, smoke in `tests/smoke.harness.spec.ts` against published npm versions, SHA-256SUMS manifest.
+
+The category being crowded is stated on purpose: this plugin's value is the evidence chain and the standard-interface demonstration, not feature uniqueness.
+
+## Honest scope
+
 ## Honest scope
 
 - The policy is **operator-declared** — this is not a general safety oracle, and it does not replace the harness's own permission/sandbox/approval layers; it composes with them at the guard seam.
