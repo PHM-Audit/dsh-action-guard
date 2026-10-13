@@ -11,7 +11,7 @@
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import type { ToolGuard } from '@deepseek-ai/dsh-core-tools'
+import type { ToolGuard } from '@deepseek-ai/dsh-tools'
 import { evaluateGuard, ledgerChainId, type GuardPolicy } from './guard-core.ts'
 import { appendFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'

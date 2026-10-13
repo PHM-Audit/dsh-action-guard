@@ -6,6 +6,8 @@ A deterministic pre-execution tool-call guard plugin for [DeepSeek Harness](http
 
 Gate test artifact: 2009-frame deterministic command stream (2000 benign + 7 injected violations + determinism/ledger/pathological-input checks, no RNG, no network) — **0 false positives on benign, all injected violations caught by the intended rule**, 12/12 vitest cases green (2026-10-13). Run: `bash run_demo.sh`.
 
+End-to-end smoke: the Cordis wrapper is additionally verified against the **published npm packages** `@deepseek-ai/dsh-system-prompt` + `@deepseek-ai/dsh-tools` 0.0.1-rc.1 (2026-10-13) — loaded the cordis way (`ctx.plugin`, `static inject` resolved), a real tool registered, and a real `execute()` call to a non-allowlisted tool **denied with the expected R-unknown reason through the actual pipeline** (3/3 smoke cases). Version-pinned smoke: the harness is under active development; re-run `npx vitest run tests/smoke.harness.spec.ts` against your deployed version.
+
 ## What it checks (all operator-declared, all deterministic)
 
 - **R-unknown** — tool must be in the declared allowlist
@@ -19,7 +21,7 @@ Gate test artifact: 2009-frame deterministic command stream (2000 benign + 7 inj
 
 - The policy is **operator-declared** — this is not a general safety oracle, and it does not replace the harness's own permission/sandbox/approval layers; it composes with them at the guard seam.
 - Same-source fix cycles are not independent stability trials. The 2009-frame gate is a mechanism demonstration, not a statistical claim.
-- The guard core is a pure function (`src/guard-core.ts`, zero dependencies); the Cordis wrapper (`src/index.ts`) adapts it to `ctx.tools.guard` on current harness types. The wrapper is written against the published package layout and should be smoke-tested against the harness version you deploy (API may move — the project is under active development, per its own docs).
+- The guard core is a pure function (`src/guard-core.ts`, zero dependencies); the Cordis wrapper (`src/index.ts`) imports `ToolGuard` from the published `@deepseek-ai/dsh-tools` package and is smoke-tested as described above. One earlier revision imported a wrong internal-only package name; the smoke test against npm packages is the guard against that class of error.
 - Ledger writes are best-effort and contained; they cannot affect the verdict path.
 
 ## Plugin shape (matches harness plugin conventions)
