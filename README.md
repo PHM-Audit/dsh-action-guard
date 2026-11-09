@@ -6,6 +6,13 @@ A deterministic pre-execution tool-call guard plugin for [DeepSeek Harness](http
 
 Gate test artifact: 2009-frame deterministic command stream (2000 benign + 7 injected violations + determinism/ledger/pathological-input checks, no RNG, no network) — **0 false positives on benign, all injected violations caught by the intended rule**, 12/12 vitest cases green (2026-10-13). Run: `bash run_demo.sh`.
 
+## TL;DR — the four facts
+
+- **Who it's for** — operators and teams running DeepSeek Harness where tool calls touch real systems (shell, files, network, payments): they want tool-call policy they declared, not a model's judgment call.
+- **What problem it solves** — pre-execution, deterministic enforcement of an operator-declared tool-call policy at the official monotonic guard seam: unknown tools denied, forbidden keys/values blocked, numeric bounds enforced — every verdict reproducible and recorded.
+- **Key features** — four deterministic rules (R-unknown / R-keys / R-equals / R-bounds) + fail-closed on internal error + a local JSONL decision ledger with chain ids; pure-function core (zero deps), cordis wrapper smoke-tested against the published `@deepseek-ai/dsh-tools` package.
+- **Current results** — 12/12 vitest green; 2009-frame gate: FP=0 on 2000 benign commands, 7/7 injected violations caught by the intended rule; 3/3 end-to-end smoke through the real pipeline; parent methodology (PHM) validated on the AgentDojo official benchmark (v2.2 re-run: no ASR/FP events, fix-cycle 16→1→0 published).
+
 End-to-end smoke: the Cordis wrapper is additionally verified against the **published npm packages** `@deepseek-ai/dsh-system-prompt` + `@deepseek-ai/dsh-tools` 0.0.1-rc.1 (2026-10-13) — loaded the cordis way (`ctx.plugin`, `static inject` resolved), a real tool registered, and a real `execute()` call to a non-allowlisted tool **denied with the expected R-unknown reason through the actual pipeline** (3/3 smoke cases). Version-pinned smoke: the harness is under active development; re-run `npx vitest run tests/smoke.harness.spec.ts` against your deployed version.
 
 ## What it checks (all operator-declared, all deterministic)
@@ -41,10 +48,6 @@ Four properties of the guard seam that scope what this plugin's ledger and rules
 **Why the guard seam (and not a `tools/pre-execute` listener):** a guard is monotonic — no other layer can force-allow what it denied — while a pre-execute listener sits in a waterfall it does not own, and one early `allow` ends the chain for everyone after it. Deterministic, synchronous, name+arguments policy belongs here; operator-visible asks belong to the waterfall.
 
 **Mount-point note:** all guards are monotonic-deny, so the outcome is order-independent — but the *reported reason* is the first one found (global first, then scope chain farthest-first). If your policy can deny the same call from two layers, pin a single mount point to keep reported rule ids unambiguous.
-
-## Honest scope
-
-## Honest scope
 
 ## Honest scope
 
